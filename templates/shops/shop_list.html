@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Coffee Shops</h2>
+
+{% if user.is_authenticated %}
+  <p><a href="{% url 'shops:add_shop' %}">+ Submit a new shop</a></p>
+{% else %}
+  <p><a href="{% url 'accounts:login' %}">Log in</a> to submit a new shop.</p>
+{% endif %}
+
+<ul>
+  {% for s in shops %}
+    <li>
+      <a href="{% url 'shops:shop_detail' s.slug %}">{{ s.name }}</a>
+      {% if s.location %} — {{ s.location }}{% endif %}
+    </li>
+  {% empty %}
+    <li>No approved shops yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ shop.name }}</h2>
+{% if shop.location %}<p><strong>Location:</strong> {{ shop.location }}</p>{% endif %}
+{% if shop.description %}<p>{{ shop.description }}</p>{% endif %}
+
+<h3>Drinks at this shop</h3>
+<ul>
+  {% for d in drinks %}
+    <li><a href="{% url 'drinks:detail' d.slug %}">{{ d.name }}</a> ({{ d.reviews.count }} reviews)</li>
+  {% empty %}
+    <li>No drinks added for this shop yet.</li>
+  {% endfor %}
+</ul>
+
+<h3>All reviews for this shop</h3>
+<ul>
+  {% for r in reviews %}
+    <li>
+      <strong>{{ r.user.username }}</strong> — <em>{{ r.drink.name }}</em>
+      — overall {{ r.overall|floatformat:1 }}
+      {% if r.comment %}<br>{{ r.comment }}{% endif %}
+    </li>
+  {% empty %}
+    <li>No reviews yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

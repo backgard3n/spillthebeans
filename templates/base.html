@@ -6,9 +6,10 @@
 </head>
 <body>
   <nav>
-    <a href="/">Home</a> |
-    <a href="/drinks/">Drinks</a> |
-    <a href="/drinks/leaderboard/">Leaderboard</a> |
+    <a href="{% url 'home' %}">Home</a> |
+    <a href="{% url 'drinks:list' %}">Drinks</a> |
+    <a href="{% url 'drinks:leaderboard' %}">Leaderboard</a> |
+    <a href="{% url 'shops:shop_list' %}">Shops</a> |
     {% if user.is_authenticated %}
       <a href="/accounts/profile/">Profile</a> |
       <a href="/accounts/logout/">Logout</a>

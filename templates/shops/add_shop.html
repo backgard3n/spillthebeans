@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Submit a Coffee Shop</h2>
+<p>Your shop will be reviewed before it appears publicly.</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit shop</button>
+</form>
+{% endblock %}
