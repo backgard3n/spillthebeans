@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Leaderboard (placeholder)</h2>
+<p>Next step: compute top rated / most reviewed.</p>
+<ul>
+  {% for d in drinks %}
+    <li>{{ d.name }} @ {{ d.shop_name }} ({{ d.reviews.count }} reviews)</li>
+  {% endfor %}
+</ul>
+{% endblock %}

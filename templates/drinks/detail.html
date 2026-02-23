@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ drink.name }} @ {{ drink.shop_name }}</h2>
+<p>Type: {{ drink.get_drink_type_display }}</p>
+{% if drink.price %}<p>Price: £{{ drink.price }}</p>{% endif %}
+
+<p><a href="{% url 'reviews:add' drink.id %}">Add / edit your review</a></p>
+
+<h3>Reviews</h3>
+<ul>
+  {% for r in drink.reviews.all %}
+    <li>
+      <strong>{{ r.user.username }}</strong> — overall {{ r.overall|floatformat:1 }}
+      {% if r.comment %}<br>{{ r.comment }}{% endif %}
+    </li>
+  {% empty %}
+    <li>No reviews yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

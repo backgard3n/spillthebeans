@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Drinks</h2>
+<ul>
+  {% for d in drinks %}
+    <li><a href="{% url 'drinks:detail' d.slug %}">{{ d.name }} @ {{ d.shop_name }}</a></li>
+  {% empty %}
+    <li>No drinks yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
