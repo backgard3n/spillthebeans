@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
@@ -6,6 +7,8 @@
 </head>
 <body>
   <nav>
+    <a href="{% url 'home' %}">
+    <img src="{% static 'images/logo.png' %}" alt="SpillTheBeans logo" height="40"></a>
     <a href="{% url 'home' %}">Home</a> |
     <a href="{% url 'drinks:list' %}">Drinks</a> |
     <a href="{% url 'drinks:leaderboard' %}">Leaderboard</a> |

@@ -1,5 +1,34 @@
 {% extends "base.html" %}
+
 {% block content %}
+
 <h1>SpillTheBeans</h1>
-<p>Rate Every Brew ☕</p>
+<p>rate every brew</p>
+
+<div>
+    <a href="{% url 'drinks:list' %}">
+        <button>drinks</button>
+    </a>
+
+    <a href="{% url 'shops:shop_list' %}">
+        <button>shop</button>
+    </a>
+</div>
+
+<hr>
+
+<h3>Top Rated drinks:</h3>
+
+<div>
+    <p><i>drinks will go here</i></p>
+</div>
+
+<hr>
+
+<h3>Top Rated shops:</h3>
+
+<div>
+    <p><i>shops will go here</i></p>
+</div>
+
 {% endblock %}
