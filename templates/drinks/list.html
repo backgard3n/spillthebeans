@@ -1,11 +1,104 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Drinks</h2>
-<ul>
-  {% for d in drinks %}
-    <li><a href="{% url 'drinks:detail' d.slug %}">{{ d.name }} @ {{ d.shop_name }}</a></li>
-  {% empty %}
-    <li>No drinks yet.</li>
-  {% endfor %}
-</ul>
+  <h1>Browse Drinks</h1>
+
+  <form method="get">
+    <div>
+      <label for="q">Search</label>
+      <input
+        type="text"
+        name="q"
+        id="q"
+        value="{{ query|default:'' }}"
+        placeholder="Search drinks or shops"
+      >
+    </div>
+
+    <div>
+      <label for="shop">Shop</label>
+      <select name="shop" id="shop">
+        <option value="">All shops</option>
+        {% for shop in shops %}
+          <option value="{{ shop.slug }}" {% if selected_shop == shop.slug %}selected{% endif %}>
+            {{ shop.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label for="drink_type">Drink type</label>
+      <select name="drink_type" id="drink_type">
+        <option value="">All types</option>
+        {% for value, label in drinks.model.DRINK_TYPE_CHOICES %}
+          <option value="{{ value }}" {% if selected_drink_type == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label for="rating">Minimum rating</label>
+      <select name="rating" id="rating">
+        <option value="">Any rating</option>
+        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+</option>
+        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+</option>
+        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+</option>
+        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="sort">Sort by</label>
+      <select name="sort" id="sort">
+        <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name</option>
+        <option value="top_rated" {% if selected_sort == "top_rated" %}selected{% endif %}>Top rated</option>
+        <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Price: Low to high</option>
+        <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Price: High to low</option>
+      </select>
+    </div>
+
+    <button type="submit">Apply</button>
+    <a href="{% url 'drinks:list' %}">Clear filters</a>
+  </form>
+
+  <hr>
+
+  {% if drinks %}
+    <ul>
+      {% for drink in drinks %}
+        <li>
+          <h3>
+            <a href="{% url 'drinks:detail' drink.slug %}">
+              {{ drink.name }}
+            </a>
+          </h3>
+
+          <p>
+            Shop:
+            <a href="{% url 'shops:detail' drink.shop.slug %}">
+              {{ drink.shop.name }}
+            </a>
+          </p>
+
+          <p>Type: {{ drink.get_drink_type_display }}</p>
+
+          {% if drink.price %}
+            <p>Price: £{{ drink.price }}</p>
+          {% endif %}
+
+          {% if drink.avg_rating %}
+            <p>Average rating: {{ drink.avg_rating|floatformat:1 }}/5</p>
+          {% else %}
+            <p>No ratings yet</p>
+          {% endif %}
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No drinks match your filters.</p>
+  {% endif %}
 {% endblock %}
