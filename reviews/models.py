@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class DrinkReview(models.Model):
@@ -10,11 +11,21 @@ class DrinkReview(models.Model):
         related_name="drink_reviews",
     )
 
-    taste = models.PositiveSmallIntegerField(default=1)
-    temperature = models.PositiveSmallIntegerField(default=1)
-    value = models.PositiveSmallIntegerField(default=1)
-    presentation = models.PositiveSmallIntegerField(default=1)
-    strength = models.PositiveSmallIntegerField(default=1)
+    taste = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    temperature = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    value = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    presentation = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    strength = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
 
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -48,7 +59,9 @@ class ShopReview(models.Model):
         on_delete=models.CASCADE,
         related_name="shop_reviews",
     )
-    overall_score = models.PositiveSmallIntegerField(default=1)
+    overall_score = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
     review_text = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
