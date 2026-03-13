@@ -13,7 +13,6 @@
   <thead>
     <tr>
       <th>Drink</th>
-      <th>Shop</th>
       <th>Review</th>
       <th>Score</th>
     </tr>
@@ -22,7 +21,6 @@
     {% for review in reviews %}
     <tr>
       <td>{{ review.drink.name }}</td>
-      <td>{{ review.shop.name }}</td>
       <td>{{ review.comment }}</td>
       <td>
         taste: {{ review.taste }}/5<br>

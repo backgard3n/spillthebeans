@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from reviews.models import DrinkReview, ShopReview
 
+
 def auth_page(request):
 
     if request.method == "POST":
@@ -65,3 +66,8 @@ def profile(request):
             "shop_reviews": shop_reviews,
         },
     )
+
+@login_required
+def profile(request):
+    reviews = DrinkReview.objects.filter(user=request.user)
+    return render(request, "accounts/profile.html", {"reviews": reviews})
