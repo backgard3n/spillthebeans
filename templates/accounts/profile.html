@@ -13,6 +13,7 @@
   <thead>
     <tr>
       <th>Drink</th>
+      <th>Shop</th>
       <th>Review</th>
       <th>Score</th>
     </tr>
@@ -20,7 +21,8 @@
   <tbody>
     {% for review in reviews %}
     <tr>
-      <td>{{ review.drink.name }}</td>
+      <td><a href="{% url 'drinks:detail' review.drink.slug %}">{{ review.drink.name }}</a></td>
+      <td><a href="{% url 'shops:detail' review.drink.shop.slug %}">{{ review.drink.shop.name }}</a></td>
       <td>{{ review.comment }}</td>
       <td>
         taste: {{ review.taste }}/5<br>
