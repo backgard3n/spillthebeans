@@ -14,8 +14,6 @@
       <a href="{% url 'shops:shop_detail' s.slug %}">{{ s.name }}</a>
       {% if s.location %} — {{ s.location }}{% endif %}
     </li>
-  {% empty %}
-    <li>No approved shops yet.</li>
   {% endfor %}
 </ul>
 {% endblock %}

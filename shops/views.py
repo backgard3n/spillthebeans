@@ -1,18 +1,48 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
+from django.db.models import Avg, FloatField, F, ExpressionWrapper
 from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ShopForm
 from .models import Shop
 
 
 def shop_list(request):
-    shops = Shop.objects.filter(is_approved=True)
-    return render(request, "shops/shop_list.html", {"shops": shops})
+    sort = request.GET.get("sort", "name")
+
+    shops = Shop.objects.filter(is_approved=True).annotate(
+        avg_taste=Avg("drinks__reviews__taste"),
+        avg_temp=Avg("drinks__reviews__temperature"),
+        avg_value=Avg("drinks__reviews__value"),
+        avg_presentation=Avg("drinks__reviews__presentation"),
+        avg_strength=Avg("drinks__reviews__strength"),
+    ).annotate(
+        avg_rating=ExpressionWrapper(
+            (
+                F("avg_taste") +
+                F("avg_temp") +
+                F("avg_value") +
+                F("avg_presentation") +
+                F("avg_strength")
+            ) / 5.0,
+            output_field=FloatField(),
+        )
+    )
+
+    if sort == "rating":
+        shops = shops.order_by("-avg_rating", "name")
+    else:
+        shops = shops.order_by("name")
+
+    return render(
+        request,
+        "shops/list.html",
+        {
+            "shops": shops,
+            "selected_sort": sort,
+        },
+    )
 
 
 def shop_detail(request, slug):
@@ -20,7 +50,6 @@ def shop_detail(request, slug):
 
     drinks = shop.drinks.all().prefetch_related("reviews", "reviews__user")
 
-    # Flatten reviews across all drinks (simple approach)
     reviews = []
     for d in drinks:
         reviews.extend(list(d.reviews.all()))
@@ -28,7 +57,7 @@ def shop_detail(request, slug):
 
     return render(
         request,
-        "shops/shop_detail.html",
+        "shops/detail.html",
         {"shop": shop, "drinks": drinks, "reviews": reviews},
     )
 
@@ -69,7 +98,11 @@ def edit_shop(request, slug):
     else:
         form = ShopForm(instance=shop)
 
-    return render(request, "shops/edit.html", {
-        "form": form,
-        "shop": shop,
-    })
+    return render(
+        request,
+        "shops/edit.html",
+        {
+            "form": form,
+            "shop": shop,
+        },
+    )
