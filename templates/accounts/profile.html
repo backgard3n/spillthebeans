@@ -21,15 +21,16 @@
   <tbody>
     {% for review in reviews %}
     <tr>
-      <td>{{ review.drink }}</td>
-      <td>{{ review.shop }}</td>
-      <td>{{ review.text }}</td>
+      <td>{{ review.drink.name }}</td>
+      <td>{{ review.shop.name }}</td>
+      <td>{{ review.comment }}</td>
       <td>
-        taste: {{ review.taste_score }}/5<br>
-        tempature: {{ review.tempature_score }}/5<br>
-        value: {{ review.value_score }}/5<br>
-        presentation: {{ review.presentation_score }}/5<br>
-        Strength: {{ review.strength_score }}/5<br>
+        taste: {{ review.taste }}/5<br>
+        tempature: {{ review.tempature }}/5<br>
+        value: {{ review.value }}/5<br>
+        presentation: {{ review.presentation }}/5<br>
+        Strength: {{ review.strength }}/5<br>
+        overall: {{ review.overall }}/5
       </td>
     </tr>
     {% endfor %}
