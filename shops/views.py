@@ -11,23 +11,9 @@ from .models import Shop
 def shop_list(request):
     sort = request.GET.get("sort", "name")
 
-    shops = Shop.objects.filter(is_approved=True).annotate(
-        avg_taste=Avg("drinks__reviews__taste"),
-        avg_temp=Avg("drinks__reviews__temperature"),
-        avg_value=Avg("drinks__reviews__value"),
-        avg_presentation=Avg("drinks__reviews__presentation"),
-        avg_strength=Avg("drinks__reviews__strength"),
-    ).annotate(
-        avg_rating=ExpressionWrapper(
-            (
-                F("avg_taste") +
-                F("avg_temp") +
-                F("avg_value") +
-                F("avg_presentation") +
-                F("avg_strength")
-            ) / 5.0,
-            output_field=FloatField(),
-        )
+    shops = (
+        Shop.objects.filter(is_approved=True)
+        .annotate(avg_rating=Avg("shop_reviews__overall_score"))
     )
 
     if sort == "rating":
@@ -38,27 +24,26 @@ def shop_list(request):
     return render(
         request,
         "shops/list.html",
-        {
-            "shops": shops,
-            "selected_sort": sort,
-        },
+        {"shops": shops, "selected_sort": sort},
     )
 
 
 def shop_detail(request, slug):
     shop = get_object_or_404(Shop, slug=slug, is_approved=True)
 
-    drinks = shop.drinks.all().prefetch_related("reviews", "reviews__user")
-
-    reviews = []
-    for d in drinks:
-        reviews.extend(list(d.reviews.all()))
-    reviews.sort(key=lambda r: r.created_at, reverse=True)
+    drinks = shop.drinks.all().prefetch_related("drink_reviews")
+    shop_reviews = shop.shop_reviews.select_related("user").all()
+    avg_shop_rating = shop_reviews.aggregate(avg=Avg("overall_score"))["avg"]
 
     return render(
         request,
         "shops/detail.html",
-        {"shop": shop, "drinks": drinks, "reviews": reviews},
+        {
+            "shop": shop,
+            "drinks": drinks,
+            "shop_reviews": shop_reviews,
+            "avg_shop_rating": avg_shop_rating,
+        },
     )
 
 
@@ -73,7 +58,7 @@ def add_shop(request):
             shop.is_approved = False
             shop.save()
             messages.success(request, "Shop submitted for approval.")
-            return redirect("shops:detail", slug=shop.slug)
+            return redirect("shops:submitted", slug=shop.slug)
     else:
         form = ShopForm()
 

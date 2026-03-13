@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from reviews.models import DrinkReview, ShopReview
 
 def auth_page(request):
 
@@ -45,4 +46,22 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    return render(request, "accounts/profile.html")
+    drink_reviews = (
+        DrinkReview.objects.filter(user=request.user)
+        .select_related("drink", "drink__shop")
+        .order_by("-created_at")
+    )
+    shop_reviews = (
+        ShopReview.objects.filter(user=request.user)
+        .select_related("shop")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "drink_reviews": drink_reviews,
+            "shop_reviews": shop_reviews,
+        },
+    )

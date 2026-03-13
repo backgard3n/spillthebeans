@@ -1,34 +1,33 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h1>{{ drink.name }}</h1>
-  <p>Shop: <a href="{% url 'shops:detail' drink.shop.slug %}">{{ drink.shop.name }}</a></p>
-  <p>Type: {{ drink.get_drink_type_display }}</p>
-  <p>Price: {{ drink.price }}</p>
+<h1>{{ drink.name }}</h1>
+<p>Shop: <a href="{% url 'shops:detail' drink.shop.slug %}">{{ drink.shop.name }}</a></p>
+<p>Type: {{ drink.get_drink_type_display }}</p>
+{% if drink.price %}<p>Price: £{{ drink.price }}</p>{% endif %}
 
-  {% if overall %}
-    <p>Average rating: {{ overall }}/5</p>
-  {% endif %}
+{% if overall %}
+  <p>Average rating: {{ overall }}/5</p>
+{% endif %}
 
-  {% if user.is_authenticated %}
-    <p><a href="{% url 'reviews:add' drink.id %}">Add / edit your review</a></p>
-  {% endif %}
+{% if user.is_authenticated %}
+  <p><a href="{% url 'reviews:add_drink' drink.id %}">Add / edit your review</a></p>
+{% endif %}
 
-  <h2>Reviews</h2>
-  {% for review in reviews %}
-    <div>
-      <strong>{{ review.user.username }}</strong>
-      <p>Overall: {{ review.overall }}/5</p>
-      <p>
-        Taste: {{ review.taste }} |
-        Temperature: {{ review.temperature }} |
-        Strength: {{ review.strength }} |
-        Presentation: {{ review.presentation }} |
-        Value: {{ review.value }}
-      </p>
-      <p>{{ review.comment }}</p>
-    </div>
-  {% empty %}
-    <p>No reviews yet.</p>
-  {% endfor %}
+<h2>Drink reviews</h2>
+{% for review in reviews %}
+  <div>
+    <strong>{{ review.user.username }}</strong>
+    <p>Overall: {{ review.overall }}/5</p>
+    <p>
+      Taste: {{ review.taste }} |
+      Temperature: {{ review.temperature }} |
+      Strength: {{ review.strength }} |
+      Presentation: {{ review.presentation }} |
+      Value: {{ review.value }}
+    </p>
+    <p>{{ review.comment }}</p>
+  </div>
+{% empty %}
+  <p>No reviews yet.</p>
+{% endfor %}
 {% endblock %}

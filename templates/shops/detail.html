@@ -1,32 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>{{ shop.name }}</h2>
+
 {% if shop.location %}<p><strong>Location:</strong> {{ shop.location }}</p>{% endif %}
 {% if shop.description %}<p>{{ shop.description }}</p>{% endif %}
 
-<h3>Drinks at this shop</h3>
+{% if avg_shop_rating %}
+  <p><strong>Average shop rating:</strong> {{ avg_shop_rating|floatformat:1 }}/5</p>
+{% endif %}
+
+<h3>Shop reviews</h3>
+<ul>
+  {% for review in shop_reviews %}
+    <li>
+      <strong>{{ review.user.username }}</strong>
+      — {{ review.overall_score }}/5
+      {% if review.review_text %}<br>{{ review.review_text }}{% endif %}
+    </li>
+  {% empty %}
+    <li>No shop reviews yet.</li>
+  {% endfor %}
+</ul>
+
+{% if user.is_authenticated %}
+  <p><a href="{% url 'reviews:add_shop' shop.slug %}">Add / edit shop review</a></p>
+{% endif %}
+
+<h3>Menu</h3>
 <ul>
   {% for d in drinks %}
-    <li><a href="{% url 'drinks:detail' d.slug %}">{{ d.name }}</a> ({{ d.reviews.count }} reviews)</li>
+    <li>
+      <a href="{% url 'drinks:detail' d.slug %}">{{ d.name }}</a>
+      {% if d.price %} — £{{ d.price }}{% endif %}
+    </li>
   {% empty %}
     <li>No drinks added for this shop yet.</li>
   {% endfor %}
 </ul>
 
-<h3>All reviews for this shop</h3>
-<ul>
-  {% for r in reviews %}
-    <li>
-      <strong>{{ r.user.username }}</strong> — <em>{{ r.drink.name }}</em>
-      — overall {{ r.overall|floatformat:1 }}
-      {% if r.comment %}<br>{{ r.comment }}{% endif %}
-    </li>
-  {% empty %}
-    <li>No reviews yet.</li>
-  {% endfor %}
-</ul>
-
-{% if user.is_authenticated %}
-  <p><a href="{% url 'drinks:add' shop.slug %}">Add a drink</a></p>
+{% if user == shop.owner or user.is_staff %}
+  <p><a href="{% url 'drinks:add' shop.slug %}">Add drink</a></p>
 {% endif %}
 {% endblock %}
