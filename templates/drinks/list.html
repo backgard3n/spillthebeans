@@ -1,11 +1,124 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Drinks</h2>
-<ul>
-  {% for d in drinks %}
-    <li><a href="{% url 'drinks:detail' d.slug %}">{{ d.name }} @ {{ d.shop_name }}</a></li>
-  {% empty %}
-    <li>No drinks yet.</li>
-  {% endfor %}
-</ul>
+  <h1>Browse Drinks</h1>
+
+  <form method="get" id="drink-filter-form">
+    <div>
+      <label for="q">Search</label>
+      <input
+        type="text"
+        name="q"
+        id="q"
+        value="{{ query|default:'' }}"
+        placeholder="Search drinks or shops"
+      >
+    </div>
+
+    <div>
+      <label for="shop">Shop</label>
+      <select name="shop" id="shop">
+        <option value="">All shops</option>
+        {% for shop in shops %}
+          <option value="{{ shop.slug }}" {% if selected_shop == shop.slug %}selected{% endif %}>
+            {{ shop.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label for="drink_type">Drink type</label>
+      <select name="drink_type" id="drink_type">
+        <option value="">All types</option>
+        {% for value, label in drinks.model.DRINK_TYPES %}
+          <option value="{{ value }}" {% if selected_drink_type == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label for="rating">Minimum rating</label>
+      <select name="rating" id="rating">
+        <option value="">Any rating</option>
+        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+</option>
+        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+</option>
+        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+</option>
+        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="sort">Sort by</label>
+      <select name="sort" id="sort">
+        <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name</option>
+        <option value="top_rated" {% if selected_sort == "top_rated" %}selected{% endif %}>Top rated</option>
+        <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Price: Low to high</option>
+        <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Price: High to low</option>
+      </select>
+    </div>
+
+    <button type="submit">Apply</button>
+    <a href="{% url 'drinks:list' %}" id="clear-filters-link">Clear filters</a>
+  </form>
+
+  <hr>
+
+  <div id="drink-results">
+    {% include "drinks/_drink_results.html" %}
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("drink-filter-form");
+      const results = document.getElementById("drink-results");
+      const searchInput = document.getElementById("q");
+      const clearLink = document.getElementById("clear-filters-link");
+
+      let debounceTimer;
+
+      function loadResults() {
+        const params = new URLSearchParams(new FormData(form));
+        const url = `${form.action || window.location.pathname}?${params.toString()}`;
+
+        fetch(url, {
+          headers: {
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        })
+          .then(response => response.text())
+          .then(html => {
+            results.innerHTML = html;
+            window.history.replaceState({}, "", url);
+          })
+          .catch(error => {
+            console.error("Error loading filtered drinks:", error);
+          });
+      }
+
+      form.addEventListener("change", function (event) {
+        if (event.target.tagName === "SELECT") {
+          loadResults();
+        }
+      });
+
+      searchInput.addEventListener("input", function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(loadResults, 300);
+      });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        loadResults();
+      });
+
+      clearLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        form.reset();
+        loadResults();
+      });
+    });
+  </script>
 {% endblock %}

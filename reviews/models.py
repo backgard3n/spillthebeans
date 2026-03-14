@@ -1,33 +1,74 @@
 from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
-from drinks.models import Drink
 
-
-class Review(models.Model):
+class DrinkReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    drink = models.ForeignKey(Drink, on_delete=models.CASCADE, related_name="reviews")
+    drink = models.ForeignKey(
+        "drinks.Drink",
+        on_delete=models.CASCADE,
+        related_name="drink_reviews",
+    )
 
-    taste = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    strength = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    presentation = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    value = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    taste = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    temperature = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    value = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    presentation = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    strength = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
 
     comment = models.TextField(blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        unique_together = ("user", "drink")
         ordering = ["-created_at"]
-        constraints = [
-            models.UniqueConstraint(fields=["user", "drink"], name="unique_review_per_user_per_drink")
-        ]
 
     @property
-    def overall(self) -> float:
-        return (self.taste + self.strength + self.presentation + self.value) / 4.0
+    def overall(self):
+        return round(
+            (
+                self.taste
+                + self.temperature
+                + self.value
+                + self.presentation
+                + self.strength
+            ) / 5,
+            1,
+        )
 
     def __str__(self):
-        return f"Review by {self.user} on {self.drink}"
+        return f"{self.user} -> {self.drink}"
+
+
+class ShopReview(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    shop = models.ForeignKey(
+        "shops.Shop",
+        on_delete=models.CASCADE,
+        related_name="shop_reviews",
+    )
+    overall_score = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    review_text = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "shop")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user} -> {self.shop}"

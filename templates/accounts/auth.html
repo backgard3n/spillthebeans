@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Login / Register</h2>
+
+<div>
+    <button onclick="showLogin()">Login</button>
+    <button onclick="showRegister()">Register</button>
+</div>
+
+<hr>
+
+<div id="loginForm">
+
+<form method="POST">
+{% csrf_token %}
+<input type="hidden" name="form_type" value="login">
+
+<input type="text" name="username" placeholder="username" required>
+<input type="password" name="password" placeholder="password" required>
+
+<button type="submit">LOG IN</button>
+</form>
+
+</div>
+
+<div id="registerForm" style="display:none;">
+
+<form method="POST">
+{% csrf_token %}
+<input type="hidden" name="form_type" value="register">
+
+<input type="text" name="username" placeholder="username" required>
+<input type="email" name="email" placeholder="email">
+<input type="password" name="password" placeholder="password">
+<input type="password" name="confirm" placeholder="confirm password">
+
+<button type="submit">SIGN UP</button>
+</form>
+
+</div>
+
+<script>
+function showLogin(){
+    document.getElementById("loginForm").style.display="block"
+    document.getElementById("registerForm").style.display="none"
+}
+
+function showRegister(){
+    document.getElementById("loginForm").style.display="none"
+    document.getElementById("registerForm").style.display="block"
+}
+</script>
+
+{% endblock %}

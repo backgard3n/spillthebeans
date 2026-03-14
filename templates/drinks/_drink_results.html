@@ -1,0 +1,35 @@
+{% if drinks %}
+  <ul>
+    {% for drink in drinks %}
+      <li>
+        <h3>
+          <a href="{% url 'drinks:detail' drink.slug %}">
+            {{ drink.name }}
+          </a>
+        </h3>
+
+        <p>
+          Shop:
+          <a href="{% url 'shops:detail' drink.shop.slug %}">
+            {{ drink.shop.name }}
+          </a>
+        </p>
+
+        <p>Type: {{ drink.get_drink_type_display }}</p>
+
+        {% if drink.price %}
+          <p>Price: £{{ drink.price }}</p>
+        {% endif %}
+
+        {% if drink.avg_rating %}
+          <p>Average rating: {{ drink.avg_rating|floatformat:1 }}/5</p>
+        {% else %}
+          <p>No ratings yet</p>
+        {% endif %}
+      </li>
+      <hr>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No drinks match your filters.</p>
+{% endif %}

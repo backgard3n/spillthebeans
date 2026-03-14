@@ -1,5 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Your profile</h2>
-<p>Logged in as <strong>{{ user.username }}</strong></p>
+
+<h2><strong>{{ user.username }}</strong></h2>
+
+<a href="{% url 'accounts:logout' %}">
+    <button>Logout</button>
+</a>
+
+<h2>Review History</h2>
+{% if reviews %}
+<table border="0">
+  <thead>
+    <tr>
+      <th>Drink</th>
+      <th>Shop</th>
+      <th>Review</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in reviews %}
+    <tr>
+      <td><a href="{% url 'drinks:detail' review.drink.slug %}">{{ review.drink.name }}</a></td>
+      <td><a href="{% url 'shops:detail' review.drink.shop.slug %}">{{ review.drink.shop.name }}</a></td>
+      <td>{{ review.comment }}</td>
+      <td>
+        taste: {{ review.taste }}/5<br>
+        tempature: {{ review.tempature }}/5<br>
+        value: {{ review.value }}/5<br>
+        presentation: {{ review.presentation }}/5<br>
+        Strength: {{ review.strength }}/5<br>
+        overall: {{ review.overall }}/5
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No reviews yet.</p>
+{% endif %}
 {% endblock %}

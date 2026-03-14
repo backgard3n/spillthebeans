@@ -1,5 +1,93 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1>SpillTheBeans</h1>
-<p>Rate Every Brew ☕</p>
+  <section>
+    <h1>Spill The Beans</h1>
+    <p>
+      Discover coffee shops, browse drinks, and share reviews on your favourite coffees.
+    </p>
+
+    <p>
+      <a href="{% url 'shops:list' %}">Browse Shops</a>
+      |
+      <a href="{% url 'drinks:list' %}">Browse Drinks</a>
+      {% if user.is_authenticated %}
+        |
+        <a href="{% url 'shops:add' %}">Add a Shop</a>
+      {% endif %}
+    </p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>Top Rated Shops</h2>
+
+    {% if top_shops %}
+      <ul>
+        {% for shop in top_shops %}
+          <li>
+            <h3>
+              <a href="{% url 'shops:detail' shop.slug %}">
+                {{ shop.name }}
+              </a>
+            </h3>
+
+            {% if shop.location %}
+              <p>{{ shop.location }}</p>
+            {% endif %}
+
+            {% if shop.description %}
+              <p>{{ shop.description|truncatewords:20 }}</p>
+            {% endif %}
+
+            <p>Average rating: {{ shop.avg_rating|floatformat:1 }}/5</p>
+          </li>
+          <hr>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No shops available yet.</p>
+    {% endif %}
+
+    <p><a href="{% url 'shops:list' %}">View all shops</a></p>
+  </section>
+
+  <section>
+    <h2>Top Rated Drinks</h2>
+
+    {% if top_drinks %}
+      <ul>
+        {% for drink in top_drinks %}
+          <li>
+            <h3>
+              <a href="{% url 'drinks:detail' drink.slug %}">
+                {{ drink.name }}
+              </a>
+            </h3>
+
+            <p>
+              From
+              <a href="{% url 'shops:detail' drink.shop.slug %}">
+                {{ drink.shop.name }}
+              </a>
+            </p>
+
+            <p>Type: {{ drink.get_drink_type_display }}</p>
+
+            {% if drink.price %}
+              <p>Price: £{{ drink.price }}</p>
+            {% endif %}
+
+            <p>Average rating: {{ drink.avg_rating|floatformat:1 }}/5</p>
+          </li>
+          <hr>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No drinks available yet.</p>
+    {% endif %}
+
+    <p><a href="{% url 'drinks:list' %}">View all drinks</a></p>
+  </section>
 {% endblock %}

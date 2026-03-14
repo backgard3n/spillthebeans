@@ -1,7 +1,14 @@
 from django import forms
-from .models import Review
+from .models import DrinkReview, ShopReview
 
-class ReviewForm(forms.ModelForm):
+
+class DrinkReviewForm(forms.ModelForm):
     class Meta:
-        model = Review
-        fields = ["taste", "strength", "presentation", "value", "comment"]
+        model = DrinkReview
+        fields = ["taste", "temperature", "strength", "presentation", "value", "comment"]
+
+
+class ShopReviewForm(forms.ModelForm):
+    class Meta:
+        model = ShopReview
+        fields = ["overall_score", "review_text"]

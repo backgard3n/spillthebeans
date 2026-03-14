@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Browse Shops</h1>
+
+  <form method="get">
+    <div>
+      <label for="q">Search</label>
+      <input
+        type="text"
+        name="q"
+        id="q"
+        value="{{ query|default:'' }}"
+        placeholder="Search by shop name or location"
+      >
+    </div>
+
+    <div>
+      <label for="rating">Minimum rating</label>
+      <select name="rating" id="rating">
+        <option value="">Any rating</option>
+        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+</option>
+        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+</option>
+        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+</option>
+        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="sort">Sort by</label>
+      <select name="sort" id="sort">
+        <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name</option>
+        <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Top rated</option>
+      </select>
+    </div>
+
+    <button type="submit">Apply</button>
+    <a href="{% url 'shops:list' %}">Clear filters</a>
+  </form>
+
+  <hr>
+
+  {% if shops %}
+    <ul>
+      {% for shop in shops %}
+        <li>
+          <h3>
+            <a href="{% url 'shops:detail' shop.slug %}">
+              {{ shop.name }}
+            </a>
+          </h3>
+
+          {% if shop.location %}
+            <p>Location: {{ shop.location }}</p>
+          {% endif %}
+
+          {% if shop.description %}
+            <p>{{ shop.description|truncatewords:25 }}</p>
+          {% endif %}
+
+          {% if shop.avg_rating %}
+            <p>Average rating: {{ shop.avg_rating|floatformat:1 }}/5</p>
+          {% else %}
+            <p>No ratings yet</p>
+          {% endif %}
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No shops match your filters.</p>
+  {% endif %}
+{% endblock %}
