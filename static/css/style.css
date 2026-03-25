@@ -8,10 +8,25 @@
     --coffee-accent: #d08c60;
 }
 
+body.dark-theme {
+    --page-bg: #121212;
+    --text-color: #f5f5f5;
+    --card-bg: #1e1e1e;
+    --input-bg: #2a2a2a;
+    --border-color: #444;
+    --coffee-primary: #1f1f1f;
+    --coffee-dark: #f5f5f5;
+    --coffee-secondary: #d7ccc8;
+    --coffee-light: #3a3a3a;
+    --coffee-bg: #121212;
+    --coffee-accent: #d08c60;
+}
+
 body {
-    background-color: var(--coffee-bg);
-    color: var(--coffee-dark);
+    background-color: var(--page-bg);
+    color: var(--text-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .bg-coffee {
@@ -21,6 +36,10 @@ body {
 .navbar-brand {
     font-weight: bold;
     letter-spacing: 1px;
+}
+
+.site-logo-white {
+    filter: brightness(0) invert(1);
 }
 
 a {
@@ -83,9 +102,11 @@ a:hover {
 }
 
 .card {
+    background-color: var(--card-bg);
+    color: var(--text-color);
     border-radius: 10px;
     border: 1px solid var(--coffee-light);
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.3s ease, color 0.3s ease;
 }
 
 .card:hover {
@@ -123,4 +144,39 @@ form p textarea:focus {
     padding: 5px 10px;
     border-radius: 20px;
     font-weight: bold;
+}
+
+form p input:not([type="checkbox"]):not([type="radio"]),
+form p select,
+form p textarea {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+body.dark-theme .text-muted {
+    color: #cfcfcf !important;
+}
+
+body.dark-theme .bg-white,
+body.dark-theme .bg-light {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+}
+
+body.dark-theme .btn-outline-coffee {
+    border-color: var(--coffee-secondary);
+    color: var(--coffee-secondary);
+}
+
+body.dark-theme .btn-outline-coffee:hover {
+    background: var(--coffee-secondary);
+    color: #121212;
+}
+
+#theme-toggle {
+    border-radius: 50px;
 }
