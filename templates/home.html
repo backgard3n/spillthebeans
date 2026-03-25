@@ -1,7 +1,7 @@
-{% extends "base.html" %} {% block content %}
-<div
-  class="p-5 mb-5 bg-white rounded-3 shadow-sm border border-light text-center"
->
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="p-5 mb-5 bg-white rounded-3 shadow-sm border border-light text-center">
   <h1 class="display-4 fw-bold text-coffee" style="color: var(--coffee-dark)">
     Welcome to Spill The Beans
   </h1>
@@ -9,12 +9,8 @@
     Discover the best coffee shops, browse drinks, and share your reviews.
   </p>
   <div class="mt-4">
-    <a href="{% url 'shops:list' %}" class="btn btn-coffee btn-lg px-4 me-2"
-      >Find Shops</a
-    >
-    <a href="{% url 'drinks:list' %}" class="btn btn-outline-coffee btn-lg px-4"
-      >Find Drinks</a
-    >
+    <a href="{% url 'shops:list' %}" class="btn btn-coffee btn-lg px-4 me-2">Find Shops</a>
+    <a href="{% url 'drinks:list' %}" class="btn btn-outline-coffee btn-lg px-4">Find Drinks</a>
   </div>
 </div>
 
@@ -26,25 +22,17 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body">
           <h5 class="card-title fw-bold">
-            <a
-              href="{% url 'shops:detail' slug=shop.slug %}"
-              class="text-decoration-none"
-              style="color: var(--coffee-dark)"
-              >{{ shop.name }}</a
-            >
+            <a href="{% url 'shops:detail' slug=shop.slug %}" class="text-decoration-none" style="color: var(--coffee-dark)">{{ shop.name }}</a>
           </h5>
           <p class="text-muted small mb-2">
-            <i class="bi bi-geo-alt"></i> {{ shop.location|default:"Unknown
-            Location" }}
+            <i class="bi bi-geo-alt"></i> {{ shop.location|default:"Unknown Location" }}
           </p>
           <p class="card-text text-truncate">
             {{ shop.description|default:"No description available." }}
           </p>
         </div>
         <div class="card-footer bg-transparent border-top-0 pb-3">
-          <span class="rating-badge"
-            >★ {{ shop.avg_rating|floatformat:1 }}/5</span
-          >
+          <span class="rating-badge">★ {{ shop.avg_rating|floatformat:1 }}/5</span>
         </div>
       </div>
     </div>
@@ -62,38 +50,25 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body">
           <h5 class="card-title fw-bold">
-            <a
-              href="{% url 'drinks:detail' drink.slug %}"
-              class="text-decoration-none"
-              style="color: var(--coffee-dark)"
-              >{{ drink.name }}</a
-            >
+            <a href="{% url 'drinks:detail' slug=drink.slug %}" class="text-decoration-none" style="color: var(--coffee-dark)">{{ drink.name }}</a>
           </h5>
           <p class="text-muted mb-2">
-            From:
-            <a href="{% url 'shops:detail' slug=drink.slug %}"
-            class="text-decoration-none"
-            style="color: var(--coffee-dark)">{{ drink.name }}</a
-            >
+            From: <a href="{% url 'shops:detail' slug=drink.shop.slug %}">{{ drink.shop.name }}</a>
           </p>
           <p class="card-text mb-1">
-            <span class="badge bg-secondary"
-              >{{ drink.get_drink_type_display }}</span
-            >
+            <span class="badge bg-secondary">{{ drink.get_drink_type_display }}</span>
           </p>
           {% if drink.price %}
           <p class="text-success fw-bold">£{{ drink.price }}</p>
           {% endif %}
         </div>
         <div class="card-footer bg-transparent border-top-0 pb-3">
-          <span class="rating-badge"
-            >★ {{ drink.avg_rating|floatformat:1 }}/5</span
-          >
+          <span class="rating-badge">★ {{ drink.avg_rating|floatformat:1 }}/5</span>
         </div>
       </div>
     </div>
     {% empty %}
-    <p class="text-muted mb-2">From: <a href="{% url 'shops:detail' slug=drink.shop.slug %}">{{ drink.shop.name }}</a></p>
+    <p class="text-muted">No drinks available yet.</p>
     {% endfor %}
   </div>
 </div>
