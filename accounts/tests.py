@@ -54,6 +54,16 @@ class AuthPageTests(TestCase):
         self.assertFalse(User.objects.filter(username="newuser").exists())
         messages = list(response.wsgi_request._messages)
         self.assertTrue(any("Passwords do not match" in str(m) for m in messages))
+    
+    def test_register_duplicate_username(self):
+        response = self.client.post(reverse("accounts:login"), {
+            "form_type": "register",
+            "username": "testuser",
+            "email": "other@test.com",
+            "password": "newpass123",
+            "confirm": "newpass123",
+        })
+        self.assertEqual(User.objects.filter(username="testuser").count(), 1)
 
 
 class LogoutTests(TestCase):
