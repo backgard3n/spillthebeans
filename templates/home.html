@@ -1,93 +1,100 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div
+  class="p-5 mb-5 bg-white rounded-3 shadow-sm border border-light text-center"
+>
+  <h1 class="display-4 fw-bold text-coffee" style="color: var(--coffee-dark)">
+    Welcome to Spill The Beans
+  </h1>
+  <p class="lead fs-4 text-muted">
+    Discover the best coffee shops, browse drinks, and share your reviews.
+  </p>
+  <div class="mt-4">
+    <a href="{% url 'shops:list' %}" class="btn btn-coffee btn-lg px-4 me-2"
+      >Find Shops</a
+    >
+    <a href="{% url 'drinks:list' %}" class="btn btn-outline-coffee btn-lg px-4"
+      >Find Drinks</a
+    >
+  </div>
+</div>
 
-{% block content %}
-  <section>
-    <h1>Spill The Beans</h1>
-    <p>
-      Discover coffee shops, browse drinks, and share reviews on your favourite coffees.
-    </p>
+<div class="row mb-5">
+  <h3 class="mb-4 border-bottom pb-2">☕ Top Rated Shops</h3>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for shop in top_shops %}
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">
+            <a
+              href="{% url 'shops:detail' slug=shop.slug %}"
+              class="text-decoration-none"
+              style="color: var(--coffee-dark)"
+              >{{ shop.name }}</a
+            >
+          </h5>
+          <p class="text-muted small mb-2">
+            <i class="bi bi-geo-alt"></i> {{ shop.location|default:"Unknown
+            Location" }}
+          </p>
+          <p class="card-text text-truncate">
+            {{ shop.description|default:"No description available." }}
+          </p>
+        </div>
+        <div class="card-footer bg-transparent border-top-0 pb-3">
+          <span class="rating-badge"
+            >★ {{ shop.avg_rating|floatformat:1 }}/5</span
+          >
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No shops available yet.</p>
+    {% endfor %}
+  </div>
+</div>
 
-    <p>
-      <a href="{% url 'shops:list' %}">Browse Shops</a>
-      |
-      <a href="{% url 'drinks:list' %}">Browse Drinks</a>
-      {% if user.is_authenticated %}
-        |
-        <a href="{% url 'shops:add' %}">Add a Shop</a>
-      {% endif %}
-    </p>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Top Rated Shops</h2>
-
-    {% if top_shops %}
-      <ul>
-        {% for shop in top_shops %}
-          <li>
-            <h3>
-              <a href="{% url 'shops:detail' shop.slug %}">
-                {{ shop.name }}
-              </a>
-            </h3>
-
-            {% if shop.location %}
-              <p>{{ shop.location }}</p>
-            {% endif %}
-
-            {% if shop.description %}
-              <p>{{ shop.description|truncatewords:20 }}</p>
-            {% endif %}
-
-            <p>Average rating: {{ shop.avg_rating|floatformat:1 }}/5</p>
-          </li>
-          <hr>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No shops available yet.</p>
-    {% endif %}
-
-    <p><a href="{% url 'shops:list' %}">View all shops</a></p>
-  </section>
-
-  <section>
-    <h2>Top Rated Drinks</h2>
-
-    {% if top_drinks %}
-      <ul>
-        {% for drink in top_drinks %}
-          <li>
-            <h3>
-              <a href="{% url 'drinks:detail' drink.slug %}">
-                {{ drink.name }}
-              </a>
-            </h3>
-
-            <p>
-              From
-              <a href="{% url 'shops:detail' drink.shop.slug %}">
-                {{ drink.shop.name }}
-              </a>
-            </p>
-
-            <p>Type: {{ drink.get_drink_type_display }}</p>
-
-            {% if drink.price %}
-              <p>Price: £{{ drink.price }}</p>
-            {% endif %}
-
-            <p>Average rating: {{ drink.avg_rating|floatformat:1 }}/5</p>
-          </li>
-          <hr>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No drinks available yet.</p>
-    {% endif %}
-
-    <p><a href="{% url 'drinks:list' %}">View all drinks</a></p>
-  </section>
+<div class="row">
+  <h3 class="mb-4 border-bottom pb-2">🥤 Top Rated Drinks</h3>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for drink in top_drinks %}
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">
+            <a
+              href="{% url 'drinks:detail' drink.slug %}"
+              class="text-decoration-none"
+              style="color: var(--coffee-dark)"
+              >{{ drink.name }}</a
+            >
+          </h5>
+          <p class="text-muted mb-2">
+            From:
+            <a href="{% url 'shops:detail' slug=drink.slug %}"
+            class="text-decoration-none"
+            style="color: var(--coffee-dark)">{{ drink.name }}</a
+            >
+          </p>
+          <p class="card-text mb-1">
+            <span class="badge bg-secondary"
+              >{{ drink.get_drink_type_display }}</span
+            >
+          </p>
+          {% if drink.price %}
+          <p class="text-success fw-bold">£{{ drink.price }}</p>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-transparent border-top-0 pb-3">
+          <span class="rating-badge"
+            >★ {{ drink.avg_rating|floatformat:1 }}/5</span
+          >
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted mb-2">From: <a href="{% url 'shops:detail' slug=drink.shop.slug %}">{{ drink.shop.name }}</a></p>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}

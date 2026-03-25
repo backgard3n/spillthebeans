@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
@@ -29,6 +30,9 @@ class Shop(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
+            if not base_slug:
+                base_slug = str(uuid.uuid4())[:8]
+                
             slug = base_slug
             counter = 1
 

@@ -1,124 +1,135 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
 {% block content %}
-  <h1>Browse Drinks</h1>
+<h1 class="mb-4">Browse Drinks</h1>
 
-  <form method="get" id="drink-filter-form">
-    <div>
-      <label for="q">Search</label>
-      <input
-        type="text"
-        name="q"
-        id="q"
-        value="{{ query|default:'' }}"
-        placeholder="Search drinks or shops"
-      >
+<div class="row">
+  <div class="col-lg-3 col-md-4 mb-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body border-0">
+        <h5 class="card-title fw-bold mb-3">Filters</h5>
+        
+        <form method="get" id="drink-filter-form">
+          <div class="mb-3">
+            <label for="q" class="form-label text-muted small">Search</label>
+            <input type="text" name="q" id="q" class="form-control" value="{{ query|default:'' }}" placeholder="Drink or shop name" />
+          </div>
+
+          <div class="mb-3">
+            <label for="shop" class="form-label text-muted small">Shop</label>
+            <select name="shop" id="shop" class="form-select">
+              <option value="">All shops</option>
+              {% for shop in shops %}
+              <option value="{{ shop.slug }}" {% if selected_shop == shop.slug %}selected{% endif %}>
+                {{ shop.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="drink_type" class="form-label text-muted small">Drink Type</label>
+            <select name="drink_type" id="drink_type" class="form-select">
+              <option value="">All types</option>
+              <option value="latte" {% if selected_drink_type == "latte" %}selected{% endif %}>Latte</option>
+              <option value="espresso" {% if selected_drink_type == "espresso" %}selected{% endif %}>Espresso</option>
+              <option value="cappuccino" {% if selected_drink_type == "cappuccino" %}selected{% endif %}>Cappuccino</option>
+              <option value="americano" {% if selected_drink_type == "americano" %}selected{% endif %}>Americano</option>
+              <option value="flat_white" {% if selected_drink_type == "flat_white" %}selected{% endif %}>Flat White</option>
+              <option value="mocha" {% if selected_drink_type == "mocha" %}selected{% endif %}>Mocha</option>
+              <option value="iced" {% if selected_drink_type == "iced" %}selected{% endif %}>Iced Coffee</option>
+              <option value="other" {% if selected_drink_type == "other" %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="rating" class="form-label text-muted small">Minimum Rating</label>
+            <select name="rating" id="rating" class="form-select">
+              <option value="">Any rating</option>
+              <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+ Stars</option>
+              <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+ Stars</option>
+              <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+ Stars</option>
+              <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+ Stars</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="sort" class="form-label text-muted small">Sort By</label>
+            <select name="sort" id="sort" class="form-select">
+              <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name (A-Z)</option>
+              <option value="top_rated" {% if selected_sort == "top_rated" %}selected{% endif %}>Top Rated</option>
+              <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Price: Low to High</option>
+              <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Price: High to Low</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-coffee w-100 mb-2">
+            <i class="bi bi-funnel-fill me-1"></i> Apply Filters
+          </button>
+          <a href="{% url 'drinks:list' %}" id="clear-filters-link" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Clear
+          </a>
+        </form>
+      </div>
     </div>
-
-    <div>
-      <label for="shop">Shop</label>
-      <select name="shop" id="shop">
-        <option value="">All shops</option>
-        {% for shop in shops %}
-          <option value="{{ shop.slug }}" {% if selected_shop == shop.slug %}selected{% endif %}>
-            {{ shop.name }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div>
-      <label for="drink_type">Drink type</label>
-      <select name="drink_type" id="drink_type">
-        <option value="">All types</option>
-        {% for value, label in drinks.model.DRINK_TYPES %}
-          <option value="{{ value }}" {% if selected_drink_type == value %}selected{% endif %}>
-            {{ label }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div>
-      <label for="rating">Minimum rating</label>
-      <select name="rating" id="rating">
-        <option value="">Any rating</option>
-        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+</option>
-        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+</option>
-        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+</option>
-        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="sort">Sort by</label>
-      <select name="sort" id="sort">
-        <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name</option>
-        <option value="top_rated" {% if selected_sort == "top_rated" %}selected{% endif %}>Top rated</option>
-        <option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Price: Low to high</option>
-        <option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Price: High to low</option>
-      </select>
-    </div>
-
-    <button type="submit">Apply</button>
-    <a href="{% url 'drinks:list' %}" id="clear-filters-link">Clear filters</a>
-  </form>
-
-  <hr>
-
-  <div id="drink-results">
-    {% include "drinks/_drink_results.html" %}
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const form = document.getElementById("drink-filter-form");
-      const results = document.getElementById("drink-results");
-      const searchInput = document.getElementById("q");
-      const clearLink = document.getElementById("clear-filters-link");
+  <div class="col-lg-9 col-md-8">
+    <div id="drink-results">
+      {% include "drinks/_drink_results.html" %}
+    </div>
+  </div>
+</div>
 
-      let debounceTimer;
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("drink-filter-form");
+    const results = document.getElementById("drink-results");
+    const searchInput = document.getElementById("q");
+    const clearLink = document.getElementById("clear-filters-link");
 
-      function loadResults() {
-        const params = new URLSearchParams(new FormData(form));
-        const url = `${form.action || window.location.pathname}?${params.toString()}`;
+    let debounceTimer;
 
-        fetch(url, {
-          headers: {
-            "X-Requested-With": "XMLHttpRequest"
-          }
+    function loadResults() {
+      const params = new URLSearchParams(new FormData(form));
+      const url = `${form.action || window.location.pathname}?${params.toString()}`;
+
+      fetch(url, {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((response) => response.text())
+        .then((html) => {
+          results.innerHTML = html;
+          window.history.replaceState({}, "", url);
         })
-          .then(response => response.text())
-          .then(html => {
-            results.innerHTML = html;
-            window.history.replaceState({}, "", url);
-          })
-          .catch(error => {
-            console.error("Error loading filtered drinks:", error);
-          });
+        .catch((error) => {
+          console.error("Error loading filtered drinks:", error);
+        });
+    }
+
+    form.addEventListener("change", function (event) {
+      if (event.target.tagName === "SELECT") {
+        loadResults();
       }
-
-      form.addEventListener("change", function (event) {
-        if (event.target.tagName === "SELECT") {
-          loadResults();
-        }
-      });
-
-      searchInput.addEventListener("input", function () {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(loadResults, 300);
-      });
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        loadResults();
-      });
-
-      clearLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        form.reset();
-        loadResults();
-      });
     });
-  </script>
+
+    searchInput.addEventListener("input", function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadResults, 300);
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      loadResults();
+    });
+
+    clearLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      form.reset();
+      loadResults();
+    });
+  });
+</script>
 {% endblock %}

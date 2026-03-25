@@ -1,42 +1,69 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><strong>{{ user.username }}'s Profile</strong></h2>
+</div>
 
-<h2><strong>{{ user.username }}</strong></h2>
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-coffee text-white">
+    <h5 class="mb-0">Your Drink Reviews</h5>
+  </div>
+  <div class="card-body p-0">
+    {% if drink_reviews %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr><th>Drink</th><th>Shop</th><th>Review</th><th>Ratings</th></tr>
+        </thead>
+        <tbody>
+          {% for review in drink_reviews %}
+          <tr>
+            <td><strong><a href="{% url 'drinks:detail' slug=review.drink.slug %}">{{ review.drink.name }}</a></strong></td>
+            <td><a href="{% url 'shops:detail' slug=review.drink.shop.slug %}">{{ review.drink.shop.name }}</a></td>
+            <td><small><i>"{{ review.comment }}"</i></small></td>
+            <td>
+              <span class="badge bg-secondary">Overall: {{ review.overall }}</span><br />
+              <small class="text-muted">T: {{ review.taste }} | Temp: {{ review.temperature }} | Val: {{ review.value }}</small>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="p-4 text-center text-muted">
+      <p>You haven't reviewed any drinks yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
 
-<a href="{% url 'accounts:logout' %}">
-    <button>Logout</button>
-</a>
-
-<h2>Review History</h2>
-{% if reviews %}
-<table border="0">
-  <thead>
-    <tr>
-      <th>Drink</th>
-      <th>Shop</th>
-      <th>Review</th>
-      <th>Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for review in reviews %}
-    <tr>
-      <td><a href="{% url 'drinks:detail' review.drink.slug %}">{{ review.drink.name }}</a></td>
-      <td><a href="{% url 'shops:detail' review.drink.shop.slug %}">{{ review.drink.shop.name }}</a></td>
-      <td>{{ review.comment }}</td>
-      <td>
-        taste: {{ review.taste }}/5<br>
-        tempature: {{ review.tempature }}/5<br>
-        value: {{ review.value }}/5<br>
-        presentation: {{ review.presentation }}/5<br>
-        Strength: {{ review.strength }}/5<br>
-        overall: {{ review.overall }}/5
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No reviews yet.</p>
-{% endif %}
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-coffee text-white">
+    <h5 class="mb-0">Your Shop Reviews</h5>
+  </div>
+  <div class="card-body p-0">
+    {% if shop_reviews %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr><th>Shop</th><th>Review</th><th>Rating</th></tr>
+        </thead>
+        <tbody>
+          {% for review in shop_reviews %}
+          <tr>
+            <td><strong><a href="{% url 'shops:detail' slug=review.shop.slug %}">{{ review.shop.name }}</a></strong></td>
+            <td><small><i>"{{ review.review_text }}"</i></small></td>
+            <td><span class="badge bg-secondary">Overall: {{ review.overall_score }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="p-4 text-center text-muted">
+      <p>You haven't reviewed any shops yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

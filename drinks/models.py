@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from shops.models import Shop
@@ -64,9 +65,13 @@ class Drink(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             base = slugify(f"{self.name}-{self.shop.name}")
+
+            if not base:
+                base = str(uuid.uuid4())[:8]
+
             slug = base
             counter = 1
-            while Drink.objects.filter(slug=slug).exists():
+            while Drink.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 counter += 1
                 slug = f"{base}-{counter}"
             self.slug = slug

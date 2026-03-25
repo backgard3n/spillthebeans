@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Add drink for {{ shop.name }}</h1>
-
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add drink</button>
-  </form>
+<div class="row justify-content-center">
+    <div class="col-md-6 mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-coffee text-white text-center py-3">
+                <h3 class="mb-0">Add Drink to Menu</h3>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center small mb-4">Adding a new drink for <strong>{{ shop.name }}</strong></p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-coffee w-100 mt-4">
+                        <i class="bi bi-plus-circle me-2"></i> Add Drink
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

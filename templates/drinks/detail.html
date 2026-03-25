@@ -1,33 +1,65 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>{{ drink.name }}</h1>
-<p>Shop: <a href="{% url 'shops:detail' drink.shop.slug %}">{{ drink.shop.name }}</a></p>
-<p>Type: {{ drink.get_drink_type_display }}</p>
-{% if drink.price %}<p>Price: £{{ drink.price }}</p>{% endif %}
+{% extends "base.html" %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body text-center p-5">
+        <h1 class="display-5 fw-bold">{{ drink.name }}</h1>
+        <p class="fs-5 mb-2">
+          From:
+          <a href="{% url 'shops:detail' slug=drink.shop.slug %}" class="fw-bold"
+            >{{ drink.shop.name }}</a
+          >
+        </p>
+        <div class="mb-3">
+          <span class="badge bg-secondary fs-6 me-2"
+            >{{ drink.get_drink_type_display }}</span
+          >
+          {% if drink.price %}<span class="badge bg-success fs-6"
+            >£{{ drink.price }}</span
+          >{% endif %}
+        </div>
 
-{% if overall %}
-  <p>Average rating: {{ overall }}/5</p>
-{% endif %}
+        {% if overall %}
+        <div class="mt-4">
+          <span class="rating-badge fs-4 shadow-sm"
+            >Overall Score: {{ overall }}/5</span
+          >
+        </div>
+        {% endif %} {% if user.is_authenticated %}
+          <a href="{% url 'reviews:add_drink' drink_id=drink.id %}" class="btn btn-coffee btn-lg mt-4 px-5">
+                        <i class="bi bi-pencil-square me-2"></i> Write a Review
+                    </a>
+        {% endif %}
+      </div>
+    </div>
 
-{% if user.is_authenticated %}
-  <p><a href="{% url 'reviews:add_drink' drink.id %}">Add / edit your review</a></p>
-{% endif %}
+    <h3 class="mb-4 border-bottom pb-2">Drink Reviews</h3>
+    {% for review in reviews %}
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+          <h5 class="fw-bold mb-0">{{ review.user.username }}</h5>
+          <span class="badge bg-primary">Overall: {{ review.overall }}/5</span>
+        </div>
 
-<h2>Drink reviews</h2>
-{% for review in reviews %}
-  <div>
-    <strong>{{ review.user.username }}</strong>
-    <p>Overall: {{ review.overall }}/5</p>
-    <p>
-      Taste: {{ review.taste }} |
-      Temperature: {{ review.temperature }} |
-      Strength: {{ review.strength }} |
-      Presentation: {{ review.presentation }} |
-      Value: {{ review.value }}
+        <div
+          class="bg-light p-2 rounded mb-3 small text-muted d-flex justify-content-between flex-wrap"
+        >
+          <span>Taste: <strong>{{ review.taste }}</strong></span>
+          <span>Temp: <strong>{{ review.temperature }}</strong></span>
+          <span>Strength: <strong>{{ review.strength }}</strong></span>
+          <span>Presentation: <strong>{{ review.presentation }}</strong></span>
+          <span>Value: <strong>{{ review.value }}</strong></span>
+        </div>
+
+        <p class="mb-0">"{{ review.comment }}"</p>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted text-center p-4">
+      No reviews yet for this drink. Be the first to share your thoughts!
     </p>
-    <p>{{ review.comment }}</p>
+    {% endfor %}
   </div>
-{% empty %}
-  <p>No reviews yet.</p>
-{% endfor %}
+</div>
 {% endblock %}

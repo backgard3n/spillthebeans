@@ -1,3 +1,4 @@
+# accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -7,13 +8,10 @@ from reviews.models import DrinkReview, ShopReview
 
 
 def auth_page(request):
-
     if request.method == "POST":
-
         if request.POST.get("form_type") == "login":
             username = request.POST.get("username")
             password = request.POST.get("password")
-
             user = authenticate(request, username=username, password=password)
 
             if user:
@@ -45,6 +43,7 @@ def logout_user(request):
     logout(request)
     return redirect("home")
 
+
 @login_required
 def profile(request):
     drink_reviews = (
@@ -66,8 +65,3 @@ def profile(request):
             "shop_reviews": shop_reviews,
         },
     )
-
-@login_required
-def profile(request):
-    reviews = DrinkReview.objects.filter(user=request.user)
-    return render(request, "accounts/profile.html", {"reviews": reviews})

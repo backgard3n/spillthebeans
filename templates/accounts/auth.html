@@ -1,56 +1,132 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0 mt-5">
+      <div class="card-body p-4">
+        <ul class="nav nav-pills nav-fill mb-4" id="authTabs">
+          <li class="nav-item">
+            <button
+              class="nav-link active btn-coffee text-white"
+              id="login-tab"
+              onclick="showLogin()"
+            >
+              Login
+            </button>
+          </li>
+          <li class="nav-item ms-2">
+            <button
+              class="nav-link btn-outline-coffee bg-white"
+              id="register-tab"
+              onclick="showRegister()"
+            >
+              Register
+            </button>
+          </li>
+        </ul>
 
-{% block content %}
+        <div id="loginForm">
+          <h4 class="mb-3">Welcome Back</h4>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="login" />
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input
+                type="text"
+                name="username"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-coffee w-100">LOG IN</button>
+          </form>
+        </div>
 
-<h2>Login / Register</h2>
-
-<div>
-    <button onclick="showLogin()">Login</button>
-    <button onclick="showRegister()">Register</button>
-</div>
-
-<hr>
-
-<div id="loginForm">
-
-<form method="POST">
-{% csrf_token %}
-<input type="hidden" name="form_type" value="login">
-
-<input type="text" name="username" placeholder="username" required>
-<input type="password" name="password" placeholder="password" required>
-
-<button type="submit">LOG IN</button>
-</form>
-
-</div>
-
-<div id="registerForm" style="display:none;">
-
-<form method="POST">
-{% csrf_token %}
-<input type="hidden" name="form_type" value="register">
-
-<input type="text" name="username" placeholder="username" required>
-<input type="email" name="email" placeholder="email">
-<input type="password" name="password" placeholder="password">
-<input type="password" name="confirm" placeholder="confirm password">
-
-<button type="submit">SIGN UP</button>
-</form>
-
+        <div id="registerForm" style="display: none">
+          <h4 class="mb-3">Create an Account</h4>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="register" />
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input
+                type="text"
+                name="username"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                name="confirm"
+                class="form-control"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-coffee w-100">SIGN UP</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-function showLogin(){
-    document.getElementById("loginForm").style.display="block"
-    document.getElementById("registerForm").style.display="none"
-}
-
-function showRegister(){
-    document.getElementById("loginForm").style.display="none"
-    document.getElementById("registerForm").style.display="block"
-}
+  function showLogin() {
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("registerForm").style.display = "none";
+    document
+      .getElementById("login-tab")
+      .classList.replace("btn-outline-coffee", "btn-coffee");
+    document
+      .getElementById("login-tab")
+      .classList.replace("bg-white", "text-white");
+    document
+      .getElementById("register-tab")
+      .classList.replace("btn-coffee", "btn-outline-coffee");
+    document
+      .getElementById("register-tab")
+      .classList.replace("text-white", "bg-white");
+  }
+  function showRegister() {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+    document
+      .getElementById("register-tab")
+      .classList.replace("btn-outline-coffee", "btn-coffee");
+    document
+      .getElementById("register-tab")
+      .classList.replace("bg-white", "text-white");
+    document
+      .getElementById("login-tab")
+      .classList.replace("btn-coffee", "btn-outline-coffee");
+    document
+      .getElementById("login-tab")
+      .classList.replace("text-white", "bg-white");
+  }
 </script>
-
 {% endblock %}

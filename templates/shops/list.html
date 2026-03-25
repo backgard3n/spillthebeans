@@ -1,73 +1,78 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
 {% block content %}
-  <h1>Browse Shops</h1>
+<h1 class="mb-4">Browse Coffee Shops</h1>
 
-  <form method="get">
-    <div>
-      <label for="q">Search</label>
-      <input
-        type="text"
-        name="q"
-        id="q"
-        value="{{ query|default:'' }}"
-        placeholder="Search by shop name or location"
-      >
+<div class="row">
+  <div class="col-lg-3 col-md-4 mb-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body border-0">
+        <h5 class="card-title fw-bold mb-3">Filters</h5>
+        <form method="get" id="shop-filter-form">
+          <div class="mb-3">
+            <label class="form-label text-muted small">Search</label>
+            <input type="text" name="q" id="q" class="form-control" value="{{ query|default:'' }}" placeholder="Shop name or location" />
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label text-muted small">Minimum Rating</label>
+            <select name="rating" id="rating" class="form-select">
+              <option value="">Any rating</option>
+              <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+ Stars</option>
+              <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+ Stars</option>
+              <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+ Stars</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label text-muted small">Sort By</label>
+            <select name="sort" id="sort" class="form-select">
+              <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name (A-Z)</option>
+              <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Top Rated</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn btn-coffee w-100 mb-2">
+            <i class="bi bi-funnel-fill me-1"></i> Apply Filters
+          </button>
+          <a href="{% url 'shops:list' %}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Clear
+          </a>
+          
+        </form>
+      </div>
     </div>
+  </div>
 
-    <div>
-      <label for="rating">Minimum rating</label>
-      <select name="rating" id="rating">
-        <option value="">Any rating</option>
-        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4+</option>
-        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3+</option>
-        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2+</option>
-        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1+</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="sort">Sort by</label>
-      <select name="sort" id="sort">
-        <option value="name" {% if selected_sort == "name" %}selected{% endif %}>Name</option>
-        <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Top rated</option>
-      </select>
-    </div>
-
-    <button type="submit">Apply</button>
-    <a href="{% url 'shops:list' %}">Clear filters</a>
-  </form>
-
-  <hr>
-
-  {% if shops %}
-    <ul>
+  <div class="col-lg-9 col-md-8">
+    <div class="row row-cols-1 row-cols-md-2 g-4" id="shop-results">
       {% for shop in shops %}
-        <li>
-          <h3>
-            <a href="{% url 'shops:detail' shop.slug %}">
-              {{ shop.name }}
-            </a>
-          </h3>
-
-          {% if shop.location %}
-            <p>Location: {{ shop.location }}</p>
-          {% endif %}
-
-          {% if shop.description %}
-            <p>{{ shop.description|truncatewords:25 }}</p>
-          {% endif %}
-
-          {% if shop.avg_rating %}
-            <p>Average rating: {{ shop.avg_rating|floatformat:1 }}/5</p>
-          {% else %}
-            <p>No ratings yet</p>
-          {% endif %}
-        </li>
-        <hr>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">
+              <a href="{% url 'shops:detail' slug=shop.slug %}" class="text-decoration-none text-dark">{{ shop.name }}</a>
+            </h5>
+            <p class="text-muted small mb-2">
+              <i class="bi bi-geo-alt"></i> {{ shop.location|default:"Location Unknown" }}
+            </p>
+            <p class="card-text text-truncate">{{ shop.description }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-top-0 pb-3">
+            {% if shop.avg_rating %}
+              <span class="rating-badge">★ {{ shop.avg_rating|floatformat:1 }}/5</span>
+            {% else %}
+              <span class="text-muted small">No ratings yet</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="alert alert-warning text-center border-0 shadow-sm w-100">
+        No shops match your filters.
+      </div>
       {% endfor %}
-    </ul>
-  {% else %}
-    <p>No shops match your filters.</p>
-  {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

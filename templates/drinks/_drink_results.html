@@ -1,35 +1,43 @@
 {% if drinks %}
-  <ul>
-    {% for drink in drinks %}
-      <li>
-        <h3>
-          <a href="{% url 'drinks:detail' drink.slug %}">
-            {{ drink.name }}
-          </a>
-        </h3>
-
-        <p>
-          Shop:
-          <a href="{% url 'shops:detail' drink.shop.slug %}">
-            {{ drink.shop.name }}
-          </a>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+  {% for drink in drinks %}
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title fw-bold">
+          <a href="{% url 'drinks:detail' slug=drink.slug %}">{{ drink.name }}</a>
+        </h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+          <a
+            href="{% url 'shops:detail' slug=drink.shop.slug %}"
+            class="text-secondary"
+            ><i class="bi bi-shop"></i> {{ drink.shop.name }}</a
+          >
+        </h6>
+        <p class="mb-1">
+          <span class="badge bg-secondary"
+            >{{ drink.get_drink_type_display }}</span
+          >
         </p>
-
-        <p>Type: {{ drink.get_drink_type_display }}</p>
-
         {% if drink.price %}
-          <p>Price: £{{ drink.price }}</p>
+        <p class="text-success fw-bold mb-1">£{{ drink.price }}</p>
         {% endif %}
-
+      </div>
+      <div class="card-footer bg-transparent border-top-0 pb-3">
         {% if drink.avg_rating %}
-          <p>Average rating: {{ drink.avg_rating|floatformat:1 }}/5</p>
+        <span class="rating-badge"
+          >★ {{ drink.avg_rating|floatformat:1 }}/5</span
+        >
         {% else %}
-          <p>No ratings yet</p>
+        <span class="text-muted small">No ratings yet</span>
         {% endif %}
-      </li>
-      <hr>
-    {% endfor %}
-  </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% else %}
-  <p>No drinks match your filters.</p>
+<div class="alert alert-warning text-center border-0 shadow-sm">
+  No drinks match your filters. Try adjusting your search.
+</div>
 {% endif %}
