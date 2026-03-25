@@ -28,6 +28,8 @@ def auth_page(request):
 
             if password != confirm:
                 messages.error(request, "Passwords do not match")
+            elif User.objects.filter(username=username).exists():
+                messages.error(request, "Username already taken")
             else:
                 User.objects.create_user(
                     username=username,
