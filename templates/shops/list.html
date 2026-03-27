@@ -3,6 +3,16 @@
 {% block content %}
 <h1 class="mb-4">Browse Coffee Shops</h1>
 
+{% if user.is_authenticated %}
+  <a href="{% url 'shops:add' %}">
+    <button>Add Shop</button>
+  </a>
+{% else %}
+  <p>
+    <a href="{% url 'accounts:login' %}">Log in</a> to add a shop.
+  </p>
+{% endif %}
+
 <div class="row">
   <div class="col-lg-3 col-md-4 mb-4">
     <div class="card shadow-sm border-0">
